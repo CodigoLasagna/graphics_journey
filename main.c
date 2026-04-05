@@ -2,10 +2,15 @@
 #define _DEFAULT_SOURCE
 
 
-#include <stdio.h>
+
+#include <math.h>
+
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include "source/ShaderManager.h"
+
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -14,6 +19,7 @@ void processInput(GLFWwindow *window);
 int main(int argc, char* argv[])
 {
 	GLFWwindow* window;
+	/* rectangle
 	float vertices[] =
 	{
 		 0.5f,  0.5f, 0.0f,
@@ -21,36 +27,39 @@ int main(int argc, char* argv[])
 		-0.5f, -0.5f, 0.0f,
 		-0.5f,  0.5f, 0.0f,
 	};
+	*/
+	float vertices[] =
+	{
+		 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+		 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+	};
 
+	/* rectangle
 	unsigned int indices[] =
 	{
 		0, 1, 3,
 		1, 2, 3
 	};
+	*/
 
-	const char *vertexShaderSource =
-	"#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"void main()\n"
-	"{\n"
-	"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"}\0";
-	const char *fragmentShaderSource =
-	"#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"void main()\n"
-	"{\n"
-	"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-	"}\0";
-	unsigned int vertexShader;
-	unsigned int fragmentShader;
-	unsigned int shaderProgram;
+	unsigned int indices[] =
+	{
+		0, 1, 2,
+		0, 2,
+	};
+	Shader shader_program;
 	int success;
 	char infoLog[512];
 
 	unsigned int VBO;
 	unsigned int VAO;
 	unsigned int EBO;
+
+	float timeValue = 0;
+	float greenValue = 0;
+	float blueValue = 0;
+	int vertexColorLocation = 0;
 
 	if (!glfwInit())
 	{
@@ -77,6 +86,8 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	ShaderConstructor(&shader_program, "shaders/shader.vert", "shaders/shader.frag");
+
 
 
 	glGenVertexArrays(1, &VAO);
@@ -90,48 +101,10 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
-
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		printf("%s", infoLog);
-	}
-
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		printf("%s", infoLog);
-	}
-
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-
-	if (!success)
-	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		printf("%s", infoLog);
-	}
-
-	glUseProgram(shaderProgram);
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 
 
@@ -143,12 +116,19 @@ int main(int argc, char* argv[])
 
 	while(!glfwWindowShouldClose(window))
 	{
+		timeValue = glfwGetTime();
+		blueValue = (sin(timeValue) / 2.0f);
+		greenValue = (sin(timeValue) / 2.0f) + 0.7f;
+		vertexColorLocation = glGetUniformLocation(shader_program.ID, "transColor");
+		glUseProgram(shader_program.ID);
+		glUniform3f(vertexColorLocation, 0.0f, greenValue, blueValue);
 		processInput(window);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		/*glDrawArrays(GL_TRIANGLES, 0, 3);*/
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		/*glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); rectangle*/ 
+		glDrawElements(GL_TRIANGLES, 5, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 
