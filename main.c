@@ -56,7 +56,6 @@ int main()
 	unsigned int indices[] =
 	{
 		0, 1, 2,
-		0, 2,
 	};
 
 	Shader shader_program;
@@ -93,6 +92,8 @@ int main()
 	mat4 trans;
 	vec3 rot = {0.0f, 0.0f, 1.0f};
 	vec3 scale = {0.5f, 0.5f, 0.5f};
+	glm_mat4_identity(trans);
+	unsigned int transformLoc;
 	glm_rotate(trans, glm_rad(90.f), rot);
 	glm_scale(trans, scale);
 
@@ -208,6 +209,8 @@ int main()
 	glUniform1i(glGetUniformLocation(shader_program.ID, "texture1"), 0);
 	ShaderSetInt(&shader_program ,"texture2", 1);
 
+	/*transform the drawing*/
+
 	/*bind texture before draw glDrawElements*/
 
 
@@ -225,13 +228,21 @@ int main()
 
 		/*glDrawArrays(GL_TRIANGLES, 0, 3);*/
 		/*glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); rectangle*/ 
+
+		glm_translate(trans, (vec3){0.5f, -0.5f, 0.0f});
+		glm_mat4_identity(trans);
+		glm_rotate(trans, (float)glfwGetTime(), (vec3){0.0f, 0.0f, 1.0f});
+
+		transformLoc = glGetUniformLocation(shader_program.ID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (float*)trans);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 5, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 
