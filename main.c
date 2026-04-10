@@ -42,14 +42,61 @@ int main()
 		 0.0f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.5f, 1.0f,
 	};
 	*/
+	/*square*/
 	float vertices[] =
 	{
 		/* positions        	colors           	texture coords*/
-		 0.5f,  0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
-		 0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		 0.5f,  0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
+		 0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
+		-0.5f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
 	};
+	/*cube*/
+	/*
+	float vertices[] = {
+	    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	
+	    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	
+	    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	
+	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	
+	    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	
+	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+	};
+	*/
 
 	/* rectangle*/
 	unsigned int indices[] =
@@ -79,10 +126,13 @@ int main()
 
 	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
+	int tex_width, tex_height, nrChannels;
+	int width, height;
+	unsigned char *data = stbi_load("textures/container.jpg", &tex_width, &tex_height, &nrChannels, 0);
 	unsigned int texture1;
 	unsigned int texture2;
+	width = 800;
+	height = 800;
 
 	/*simple test
 	vec4 vec = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -100,10 +150,28 @@ int main()
 	mat4 trans;
 	vec3 rot = {0.0f, 0.0f, 1.0f};
 	vec3 scale = {0.5f, 0.5f, 0.5f};
+
+	mat4 proj;
+	mat4 view;
+	mat4 model;
+
 	glm_mat4_identity(trans);
 	unsigned int transformLoc;
+	int modelLoc;
+	int viewLoc;
+	int projLoc;
 	glm_rotate(trans, glm_rad(90.f), rot);
 	glm_scale(trans, scale);
+
+	glm_mat4_identity(model);
+	glm_mat4_identity(view);
+
+	glm_rotate(model, glm_rad(-55.0f), (vec3){1.0f, 0.0f, 0.0f});
+
+	glm_translate(view, (vec3){0.0f, 0.0f, -3.0f});
+
+
+	glm_perspective(glm_rad(45.0f), (float)width/height, 0.1f, 100.0f, proj);
 
 
 
@@ -155,7 +223,7 @@ int main()
 	glEnableVertexAttribArray(0);
 
 	/*color attrib array*/
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	/*texture attrib array*/
@@ -181,7 +249,7 @@ int main()
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -196,10 +264,10 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	data = stbi_load("textures/awesomeface.png", &width, &height, &nrChannels, 0);
+	data = stbi_load("textures/awesomeface.png", &tex_width, &tex_height, &nrChannels, 0);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -221,6 +289,13 @@ int main()
 
 	/*bind texture before draw glDrawElements*/
 
+	modelLoc = glGetUniformLocation(shader_program.ID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
+	viewLoc = glGetUniformLocation(shader_program.ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)view);
+	projLoc = glGetUniformLocation(shader_program.ID, "projection");
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)proj);
+
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -237,12 +312,17 @@ int main()
 		/*glDrawArrays(GL_TRIANGLES, 0, 3);*/
 		/*glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); rectangle*/ 
 
+		/*rotation*/
+		/*
 		glm_translate(trans, (vec3){0.5f, -0.5f, 0.0f});
 		glm_mat4_identity(trans);
 		glm_rotate(trans, (float)glfwGetTime(), (vec3){0.0f, 0.0f, 1.0f});
 
 		transformLoc = glGetUniformLocation(shader_program.ID, "transform");
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (float*)trans);
+		*/
+
+
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
