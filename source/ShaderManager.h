@@ -17,11 +17,11 @@ typedef struct Shader
 }Shader;
 
 void ShaderConstructor(Shader *shader_program, const char* vertexPath, const char* fragmentPath);
-void use(Shader *shader_program);
+void useShader(Shader *shader_program);
 
-void setBool(Shader *shader_program, const char *name, bool value);
-void setInt(Shader *shader_program, const char *name, int value);
-void setFloat(Shader *shader_program, const char *name, float value);
+void ShaderSetBool(Shader *shader_program, const char *name, bool value);
+void ShaderSetInt(Shader *shader_program, const char *name, int value);
+void ShaderSetFloat(Shader *shader_program, const char *name, float value);
 
 
 

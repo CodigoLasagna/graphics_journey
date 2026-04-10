@@ -35,9 +35,9 @@ int main(int argc, char* argv[])
 	float vertices[] =
 	{
 		/* positions        	colors           	texture coords*/
-		 0.5f, -0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
-		-0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
-		 0.0f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
+		 0.0f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.5f, 1.0f,
 	};
 
 	float texCoords[] =
@@ -80,7 +80,8 @@ int main(int argc, char* argv[])
 
 	int width, height, nrChannels;
 	unsigned char *data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
-	unsigned int texture;
+	unsigned int texture1;
+	unsigned int texture2;
 
 	if (!glfwInit())
 	{
@@ -95,6 +96,8 @@ int main(int argc, char* argv[])
 		glfwTerminate();
 		return 1;
 	}
+
+	stbi_set_flip_vertically_on_load(true);
 
 	/*contexto de opengl usando glfw*/
 	glfwMakeContextCurrent(window);
@@ -144,8 +147,8 @@ int main(int argc, char* argv[])
 	*/
 
 	/*textures*/
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -162,11 +165,32 @@ int main(int argc, char* argv[])
 	}
 	stbi_image_free(data);
 
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	data = stbi_load("textures/awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		printf("Failed to load texture\n");
+	}
+	stbi_image_free(data);
+
 
 
 
 	/*glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */ /*wireframe*/
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	useShader(&shader_program);
+	glUniform1i(glGetUniformLocation(shader_program.ID, "texture1"), 0);
+	ShaderSetInt(&shader_program ,"texture2", 1);
 
 	/*bind texture before draw glDrawElements*/
 
@@ -185,7 +209,11 @@ int main(int argc, char* argv[])
 
 		/*glDrawArrays(GL_TRIANGLES, 0, 3);*/
 		/*glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); rectangle*/ 
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 5, GL_UNSIGNED_INT, 0);
 
@@ -206,7 +234,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 void processInput(GLFWwindow *window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}

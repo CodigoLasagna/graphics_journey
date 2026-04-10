@@ -95,23 +95,23 @@ void ShaderConstructor(Shader* shader_program, const char* vertexPath, const cha
 	free(fragmentCode);
 }
 
-void use(Shader *shader_program)
+void useShader(Shader *shader_program)
 {
 	glUseProgram(shader_program->ID);
 }
 
 
-void setBool(Shader *shader_program, const char *name, bool value)
+void ShaderSetBool(Shader *shader_program, const char *name, bool value)
 {
 	glUniform1i(glGetUniformLocation(shader_program->ID, name), (int)value);
 }
 
-void setInt(Shader *shader_program, const char *name, int value)
+void ShaderSetInt(Shader *shader_program, const char *name, int value)
 {
 	glUniform1i(glGetUniformLocation(shader_program->ID, name), value);
 }
 
-void setFloat(Shader *shader_program, const char *name, float value)
+void ShaderSetFloat(Shader *shader_program, const char *name, float value)
 {
 	glUniform1f(glGetUniformLocation(shader_program->ID, name), value);
 }
