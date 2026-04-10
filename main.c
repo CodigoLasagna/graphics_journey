@@ -189,11 +189,28 @@ int main()
 
 	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
+
 	int tex_width, tex_height, nrChannels;
 	int width, height;
-	unsigned char *data = stbi_load("textures/container.jpg", &tex_width, &tex_height, &nrChannels, 0);
+	unsigned char *data = stbi_load("textures/crate_px.png", &tex_width, &tex_height, &nrChannels, 0);
 	unsigned int texture1;
 	unsigned int texture2;
+
+	vec3 cubePositions[] =
+	{
+		{ 0.0f,  0.0f,  0.0f},
+		{ 2.0f,  5.0f, -15.0f},
+		{-1.5f, -2.2f, -2.5f},
+		{-3.8f, -2.0f, -12.0f},
+		{ 2.4f, -0.4f, -3.5f},
+		{-1.7f,  3.0f, -7.5f},
+		{ 1.3f, -2.0f, -2.5f},
+		{ 1.5f,  2.0f, -2.5f},
+		{ 1.5f,  0.2f, -1.5f},
+		{-1.3f,  1.0f, -1.5f},
+	};
+
+
 	width = 800;
 	height = 800;
 
@@ -307,12 +324,12 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -371,7 +388,7 @@ int main()
 		glUseProgram(shader_program.ID);
 		glUniform3f(vertexColorLocation, 0.0f, greenValue, blueValue);
 		processInput(window);
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.47f, 0.65f, 0.28f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		/*glDrawArrays(GL_TRIANGLES, 0, 3);*/
@@ -387,10 +404,6 @@ int main()
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (float*)trans);
 		*/
 		/*cube rotation*/
-		glm_mat4_identity(model);
-		glm_rotate(model, (float)glfwGetTime() * glm_rad(50.0f), (vec3){0.5f, 1.0f, 0.0f});
-		modelLoc = glGetUniformLocation(shader_program.ID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
 
 
 
@@ -400,7 +413,16 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			glm_mat4_identity(model);
+			glm_translate(model, cubePositions[i]);
+			float angle = 20.0f * (i + 0.5);
+			glm_rotate(model, (float)glfwGetTime() * glm_rad(angle), (vec3){1.0f, 0.3f, 0.5f});
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
+
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		}
 
 		glfwSwapBuffers(window);
 
