@@ -51,6 +51,47 @@ int main()
 		-0.5f, -0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
 		-0.5f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
 	};
+	float cube_vertices[] =
+	{
+		/* positions         	colors           	texture coords*/
+		/*front */
+		-0.5f, -0.5f,  0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+
+		/*back */
+		 0.5f, -0.5f, -0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+
+		/*left*/
+		-0.5f, -0.5f, -0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+
+		/*right*/
+		 0.5f, -0.5f,  0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+
+		 /*top*/
+		-0.5f,  0.5f,  0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+
+		/*bottom*/
+		-0.5f, -0.5f, -0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+
+
+	};
 	/*cube*/
 	/*
 	float vertices[] = {
@@ -101,8 +142,30 @@ int main()
 	/* rectangle*/
 	unsigned int indices[] =
 	{
-		0, 1, 3,
-		1, 2, 3
+		/*front*/
+		0, 1, 2,
+		2, 3, 0,
+
+		/*back*/
+		4, 5, 6,
+		6, 7, 4,
+
+		/*left*/
+		8, 9, 10,
+		10, 11, 8,
+
+		/*right*/
+		12, 13, 14,
+		14, 15, 12,
+
+		/*top*/
+		16, 17, 18,
+		18, 19, 16,
+
+		/*bottom*/
+		20, 21, 22,
+		22, 23, 20,
+
 	};
 
 	/*triangle*/
@@ -212,7 +275,7 @@ int main()
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -296,6 +359,8 @@ int main()
 	projLoc = glGetUniformLocation(shader_program.ID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)proj);
 
+	glEnable(GL_DEPTH_TEST);
+
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -307,7 +372,7 @@ int main()
 		glUniform3f(vertexColorLocation, 0.0f, greenValue, blueValue);
 		processInput(window);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		/*glDrawArrays(GL_TRIANGLES, 0, 3);*/
 		/*glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); rectangle*/ 
@@ -321,6 +386,11 @@ int main()
 		transformLoc = glGetUniformLocation(shader_program.ID, "transform");
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (float*)trans);
 		*/
+		/*cube rotation*/
+		glm_mat4_identity(model);
+		glm_rotate(model, (float)glfwGetTime() * glm_rad(50.0f), (vec3){0.5f, 1.0f, 0.0f});
+		modelLoc = glGetUniformLocation(shader_program.ID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
 
 
 
@@ -330,7 +400,7 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 
