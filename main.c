@@ -35,28 +35,36 @@ int main()
 		-0.5f, -0.5f, 0.0f,
 		-0.5f,  0.5f, 0.0f,
 	};
-	*/
 	float vertices[] =
 	{
-		/* positions        	colors           	texture coords*/
 		 0.5f, -0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
 		-0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
 		 0.0f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.5f, 1.0f,
 	};
+	*/
+	float vertices[] =
+	{
+		/* positions        	colors           	texture coords*/
+		 0.5f,  0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
+		 0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+	};
 
-	/* rectangle
+	/* rectangle*/
 	unsigned int indices[] =
 	{
 		0, 1, 3,
 		1, 2, 3
 	};
-	*/
 
 	/*triangle*/
+	/*
 	unsigned int indices[] =
 	{
 		0, 1, 2,
 	};
+	*/
 
 	Shader shader_program;
 
@@ -242,7 +250,7 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 
