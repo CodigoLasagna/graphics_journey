@@ -43,14 +43,15 @@ int main()
 	};
 	*/
 	/*square*/
-	float vertices[] =
+	/*
+	float rectangle_vertices[] =
 	{
-		/* positions        	colors           	texture coords*/
 		 0.5f,  0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
 		 0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
 		-0.5f, -0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
 		-0.5f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
 	};
+	*/
 	float cube_vertices[] =
 	{
 		/* positions         	colors           	texture coords*/
@@ -191,7 +192,7 @@ int main()
 
 
 	int tex_width, tex_height, nrChannels;
-	int width, height;
+	int window_width, window_height;
 	unsigned char *data = stbi_load("textures/crate_px.png", &tex_width, &tex_height, &nrChannels, 0);
 	unsigned int texture1;
 	unsigned int texture2;
@@ -211,8 +212,8 @@ int main()
 	};
 
 
-	width = 800;
-	height = 800;
+	window_width = 1420;
+	window_height = 1080;
 
 	/*simple test
 	vec4 vec = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -235,11 +236,35 @@ int main()
 	mat4 view;
 	mat4 model;
 
-	glm_mat4_identity(trans);
-	unsigned int transformLoc;
+	vec3 cameraPos = {0.0f, 0.0f, 3.0f};
+	vec3 cameraTarget = {0.0f, 0.0f, 0.0f};
+	vec3 cameraDirection;
+
+	vec3 up = {0.0f, 1.0f, 0.0f};
+	vec3 cameraRight;
+	vec3 cameraUp;
+
+	glm_vec3_sub(cameraPos, cameraTarget, cameraDirection);
+	glm_normalize(cameraDirection);
+
+	glm_cross(up, cameraDirection, cameraRight);
+	glm_normalize(cameraRight);
+	glm_cross(cameraDirection, cameraRight, cameraUp);
+
+	glm_lookat((vec3){0.0f, 0.0f, 3.0f}, (vec3){0.0f, 0.0f, 0.0f}, (vec3){0.0f, 1.0f, 0.0f}, view);
+	const float radius = 10.0f;
+	float camX = 0;
+	float camZ = 0;
+
+
+
+
+
 	int modelLoc;
 	int viewLoc;
 	int projLoc;
+
+	glm_mat4_identity(trans);
 	glm_rotate(trans, glm_rad(90.f), rot);
 	glm_scale(trans, scale);
 
@@ -251,7 +276,7 @@ int main()
 	glm_translate(view, (vec3){0.0f, 0.0f, -3.0f});
 
 
-	glm_perspective(glm_rad(45.0f), (float)width/height, 0.1f, 100.0f, proj);
+	glm_perspective(glm_rad(45.0f), (float)window_width/window_height, 0.1f, 100.0f, proj);
 
 
 
@@ -417,12 +442,20 @@ int main()
 		{
 			glm_mat4_identity(model);
 			glm_translate(model, cubePositions[i]);
-			float angle = 20.0f * (i + 0.5);
+			float angle = 20.0f * (i + 0.2);
 			glm_rotate(model, (float)glfwGetTime() * glm_rad(angle), (vec3){1.0f, 0.3f, 0.5f});
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
 
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		}
+
+		camX = sin(glfwGetTime()) * radius;
+		camZ = cos(glfwGetTime()) * radius;
+
+		glm_mat4_identity(view);
+		glm_lookat((vec3){camX, 0.0f, camZ}, (vec3){0.0f, 0.0f, 0.0f}, (vec3){0.0f, 1.0f, 0.0f}, view);
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)view);
+
 
 		glfwSwapBuffers(window);
 
