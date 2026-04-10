@@ -1,6 +1,6 @@
 CXX := gcc
-CFLAGS := -g -ansi -pedantic-errors -ftime-report
-LDFLAGS := -lglfw -lGLEW -lGLU -lGL -ldl -lm 
+CFLAGS := -g -std=c99 -Wall -Wextra -Wpedantic -pedantic-errors -ftime-report
+LDFLAGS := -lglfw -lGLEW -lGLU -lGL -ldl -lm -lcglm
 SRCE := ./source/
 TARGET := main
 

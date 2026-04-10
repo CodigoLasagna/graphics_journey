@@ -1,6 +1,8 @@
 #define _XOPEN_SOURCE 700
 #define _DEFAULT_SOURCE
 
+#include <cglm/cglm.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stb/stb_image.h>
@@ -16,11 +18,13 @@
 #include "source/ShaderManager.h"
 
 
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
 
-int main(int argc, char* argv[])
+/*int main(int argc, char* argv[])*/
+int main()
 {
 	GLFWwindow* window;
 	/* rectangle
@@ -40,14 +44,6 @@ int main(int argc, char* argv[])
 		 0.0f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.5f, 1.0f,
 	};
 
-	float texCoords[] =
-	{
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.5f, 1.0f,
-	};
-
-
 	/* rectangle
 	unsigned int indices[] =
 	{
@@ -64,8 +60,6 @@ int main(int argc, char* argv[])
 	};
 
 	Shader shader_program;
-	int success;
-	char infoLog[512];
 
 	unsigned int VBO;
 	unsigned int VAO;
@@ -82,6 +76,28 @@ int main(int argc, char* argv[])
 	unsigned char *data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
 	unsigned int texture1;
 	unsigned int texture2;
+
+	/*simple test
+	vec4 vec = {1.0f, 0.0f, 0.0f, 1.0f};
+	mat4 trans;
+	vec4 result;
+
+
+	glm_mat4_identity(trans);
+	glm_translate(trans, (vec3){1.0f, 1.0f, 0.0f});
+	glm_mat4_mulv(trans, vec, result);
+
+	printf("%f %f %f\n", result[0], result[1], result[2]);
+	*/
+
+	mat4 trans;
+	vec3 rot = {0.0f, 0.0f, 1.0f};
+	vec3 scale = {0.5f, 0.5f, 0.5f};
+	glm_rotate(trans, glm_rad(90.f), rot);
+	glm_scale(trans, scale);
+
+
+
 
 	if (!glfwInit())
 	{
@@ -229,6 +245,7 @@ int main(int argc, char* argv[])
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
+	(void) window;
 	glViewport(0, 0, width, height);
 }
 

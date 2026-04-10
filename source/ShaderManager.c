@@ -8,7 +8,7 @@ void ShaderConstructor(Shader* shader_program, const char* vertexPath, const cha
 	const char *fcode;
 	int success;
 	char infoLog[512];
-	long length = 0;
+	size_t length = 0;
 	size_t read;
 
 	FILE *fptr = fopen(vertexPath, "r");
