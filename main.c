@@ -17,10 +17,19 @@
 
 #include "source/ShaderManager.h"
 
+typedef struct Camera
+{
+	vec3 cameraPos;
+	vec3 cameraFront;
+	vec3 cameraUp;
+	float deltaTime;
+	float lastFrame;
+	float currentFrame;
+}Camera;
 
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow *window, Camera *camera);
 
 
 /*int main(int argc, char* argv[])*/
@@ -236,15 +245,22 @@ int main()
 	mat4 view;
 	mat4 model;
 
-	vec3 cameraPos = {0.0f, 0.0f, 3.0f};
+	Camera basic_cam;
+
 	vec3 cameraTarget = {0.0f, 0.0f, 0.0f};
 	vec3 cameraDirection;
 
-	vec3 up = {0.0f, 1.0f, 0.0f};
 	vec3 cameraRight;
 	vec3 cameraUp;
+	vec3 up = {0.0f, 1.0f, 0.0f};
 
-	glm_vec3_sub(cameraPos, cameraTarget, cameraDirection);
+	glm_vec3_copy((vec3){0.0f, 0.0f, 3.0f}, basic_cam.cameraPos);
+	glm_vec3_copy((vec3){0.0f, 0.0f, -1.0f}, basic_cam.cameraFront);
+	glm_vec3_copy((vec3){0.0f, 1.0f, 0.0f}, basic_cam.cameraUp);
+	basic_cam.deltaTime = 0.0f;
+	basic_cam.lastFrame = 0.0f;
+
+	glm_vec3_sub(basic_cam.cameraPos, cameraTarget, cameraDirection);
 	glm_normalize(cameraDirection);
 
 	glm_cross(up, cameraDirection, cameraRight);
@@ -252,9 +268,11 @@ int main()
 	glm_cross(cameraDirection, cameraRight, cameraUp);
 
 	glm_lookat((vec3){0.0f, 0.0f, 3.0f}, (vec3){0.0f, 0.0f, 0.0f}, (vec3){0.0f, 1.0f, 0.0f}, view);
+	/*
 	const float radius = 10.0f;
 	float camX = 0;
 	float camZ = 0;
+	*/
 
 
 
@@ -412,7 +430,7 @@ int main()
 		vertexColorLocation = glGetUniformLocation(shader_program.ID, "transColor");
 		glUseProgram(shader_program.ID);
 		glUniform3f(vertexColorLocation, 0.0f, greenValue, blueValue);
-		processInput(window);
+		processInput(window, &basic_cam);
 		glClearColor(0.47f, 0.65f, 0.28f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -429,6 +447,9 @@ int main()
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (float*)trans);
 		*/
 		/*cube rotation*/
+		basic_cam.currentFrame = glfwGetTime();
+		basic_cam.deltaTime = basic_cam.currentFrame - basic_cam.lastFrame;
+		basic_cam.lastFrame = basic_cam.currentFrame;
 
 
 
@@ -449,11 +470,16 @@ int main()
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		}
 
+		/*rotation camera*/
+		/*
 		camX = sin(glfwGetTime()) * radius;
 		camZ = cos(glfwGetTime()) * radius;
 
-		glm_mat4_identity(view);
 		glm_lookat((vec3){camX, 0.0f, camZ}, (vec3){0.0f, 0.0f, 0.0f}, (vec3){0.0f, 1.0f, 0.0f}, view);
+		*/
+		vec3 center;
+		glm_vec3_add(basic_cam.cameraPos, basic_cam.cameraFront, center);
+		glm_lookat(basic_cam.cameraPos, center, basic_cam.cameraUp, view);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)view);
 
 
@@ -473,10 +499,33 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, Camera *camera)
 {
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
+
+	const float cameraSpeed = 2.5f * camera->deltaTime;
+	vec3 temp;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		glm_vec3_muladds(camera->cameraFront, cameraSpeed, camera->cameraPos);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		glm_vec3_mulsubs(camera->cameraFront, cameraSpeed, camera->cameraPos);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		glm_cross(camera->cameraFront, camera->cameraUp, temp);
+		glm_vec3_normalize(temp);
+		glm_vec3_mulsubs(temp, cameraSpeed, camera->cameraPos);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		glm_cross(camera->cameraFront, camera->cameraUp, temp);
+		glm_vec3_normalize(temp);
+		glm_vec3_muladds(temp, cameraSpeed, camera->cameraPos);
 	}
 }
