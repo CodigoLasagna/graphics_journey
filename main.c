@@ -22,45 +22,43 @@ typedef struct Camera
 	vec3 cameraPos;
 	vec3 cameraFront;
 	vec3 cameraUp;
+	vec3 cameraDir;
+	mat4 projection;
 	float deltaTime;
 	float lastFrame;
 	float currentFrame;
+
+	float mouseLastX;
+	float mouseLastY;
+	float yaw;
+	float pitch;
+	float fov;
+	bool firstMouse;
 }Camera;
+
+typedef struct EnvAttribs
+{
+	unsigned int window_width;
+	unsigned int window_height;
+}EnvAttribs;
+
+typedef struct AppContex
+{
+	Camera *camera;
+	EnvAttribs *env;
+}AppContex;
 
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void processInput(GLFWwindow *window, Camera *camera);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 
 /*int main(int argc, char* argv[])*/
 int main()
 {
 	GLFWwindow* window;
-	/* rectangle
-	float vertices[] =
-	{
-		 0.5f,  0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		-0.5f,  0.5f, 0.0f,
-	};
-	float vertices[] =
-	{
-		 0.5f, -0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-		 0.0f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.5f, 1.0f,
-	};
-	*/
-	/*square*/
-	/*
-	float rectangle_vertices[] =
-	{
-		 0.5f,  0.5f, 0.0f, 	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
-		 0.5f, -0.5f, 0.0f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f,  0.5f, 0.0f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
-	};
-	*/
 	float cube_vertices[] =
 	{
 		/* positions         	colors           	texture coords*/
@@ -102,52 +100,6 @@ int main()
 
 
 	};
-	/*cube*/
-	/*
-	float vertices[] = {
-	    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	
-	    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	
-	    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	
-	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	
-	    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	
-	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-	*/
 
 	/* rectangle*/
 	unsigned int indices[] =
@@ -195,13 +147,15 @@ int main()
 	float timeValue = 0;
 	float greenValue = 0;
 	float blueValue = 0;
+	float angle = 0;
 	int vertexColorLocation = 0;
 
 	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 
 	int tex_width, tex_height, nrChannels;
-	int window_width, window_height;
+
+
 	unsigned char *data = stbi_load("textures/crate_px.png", &tex_width, &tex_height, &nrChannels, 0);
 	unsigned int texture1;
 	unsigned int texture2;
@@ -221,9 +175,6 @@ int main()
 	};
 
 
-	window_width = 1420;
-	window_height = 1080;
-
 	/*simple test
 	vec4 vec = {1.0f, 0.0f, 0.0f, 1.0f};
 	mat4 trans;
@@ -240,47 +191,37 @@ int main()
 	mat4 trans;
 	vec3 rot = {0.0f, 0.0f, 1.0f};
 	vec3 scale = {0.5f, 0.5f, 0.5f};
+	vec3 center;
 
-	mat4 proj;
 	mat4 view;
 	mat4 model;
 
 	Camera basic_cam;
+	EnvAttribs env_attribs;
+	AppContex ctx;
+	ctx.camera = &basic_cam;
+	ctx.env = &env_attribs;
 
-	vec3 cameraTarget = {0.0f, 0.0f, 0.0f};
-	vec3 cameraDirection;
+	int modelLoc;
+	int viewLoc;
+	int projLoc;
 
-	vec3 cameraRight;
-	vec3 cameraUp;
-	vec3 up = {0.0f, 1.0f, 0.0f};
+	env_attribs.window_height = 1420;
+	env_attribs.window_width = 1080;
+
 
 	glm_vec3_copy((vec3){0.0f, 0.0f, 3.0f}, basic_cam.cameraPos);
 	glm_vec3_copy((vec3){0.0f, 0.0f, -1.0f}, basic_cam.cameraFront);
 	glm_vec3_copy((vec3){0.0f, 1.0f, 0.0f}, basic_cam.cameraUp);
 	basic_cam.deltaTime = 0.0f;
 	basic_cam.lastFrame = 0.0f;
+	basic_cam.mouseLastX = (int) (env_attribs.window_width / 2);
+	basic_cam.mouseLastY = (int) (env_attribs.window_height / 2);
+	basic_cam.yaw = -90;
+	basic_cam.pitch = 0;
+	basic_cam.firstMouse = true;
+	basic_cam.fov = 90;
 
-	glm_vec3_sub(basic_cam.cameraPos, cameraTarget, cameraDirection);
-	glm_normalize(cameraDirection);
-
-	glm_cross(up, cameraDirection, cameraRight);
-	glm_normalize(cameraRight);
-	glm_cross(cameraDirection, cameraRight, cameraUp);
-
-	glm_lookat((vec3){0.0f, 0.0f, 3.0f}, (vec3){0.0f, 0.0f, 0.0f}, (vec3){0.0f, 1.0f, 0.0f}, view);
-	/*
-	const float radius = 10.0f;
-	float camX = 0;
-	float camZ = 0;
-	*/
-
-
-
-
-
-	int modelLoc;
-	int viewLoc;
-	int projLoc;
 
 	glm_mat4_identity(trans);
 	glm_rotate(trans, glm_rad(90.f), rot);
@@ -294,7 +235,7 @@ int main()
 	glm_translate(view, (vec3){0.0f, 0.0f, -3.0f});
 
 
-	glm_perspective(glm_rad(45.0f), (float)window_width/window_height, 0.1f, 100.0f, proj);
+	glm_perspective(glm_rad(45.0f), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
 
 
 
@@ -318,6 +259,10 @@ int main()
 	/*contexto de opengl usando glfw*/
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetWindowUserPointer(window, &ctx);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 	glViewport(0, 0, 500, 500);
 
 	if (glewInit() != GLEW_OK)
@@ -417,7 +362,7 @@ int main()
 	viewLoc = glGetUniformLocation(shader_program.ID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)view);
 	projLoc = glGetUniformLocation(shader_program.ID, "projection");
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)proj);
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)basic_cam.projection);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -447,6 +392,8 @@ int main()
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (float*)trans);
 		*/
 		/*cube rotation*/
+		glm_perspective(glm_rad(basic_cam.fov), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)basic_cam.projection);
 		basic_cam.currentFrame = glfwGetTime();
 		basic_cam.deltaTime = basic_cam.currentFrame - basic_cam.lastFrame;
 		basic_cam.lastFrame = basic_cam.currentFrame;
@@ -463,7 +410,7 @@ int main()
 		{
 			glm_mat4_identity(model);
 			glm_translate(model, cubePositions[i]);
-			float angle = 20.0f * (i + 0.2);
+			angle = 20.0f * (i + 0.2);
 			glm_rotate(model, (float)glfwGetTime() * glm_rad(angle), (vec3){1.0f, 0.3f, 0.5f});
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
 
@@ -477,7 +424,6 @@ int main()
 
 		glm_lookat((vec3){camX, 0.0f, camZ}, (vec3){0.0f, 0.0f, 0.0f}, (vec3){0.0f, 1.0f, 0.0f}, view);
 		*/
-		vec3 center;
 		glm_vec3_add(basic_cam.cameraPos, basic_cam.cameraFront, center);
 		glm_lookat(basic_cam.cameraPos, center, basic_cam.cameraUp, view);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)view);
@@ -501,13 +447,14 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 void processInput(GLFWwindow *window, Camera *camera)
 {
+	const float cameraSpeed = 2.5f * camera->deltaTime;
+	vec3 temp;
+
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
-	const float cameraSpeed = 2.5f * camera->deltaTime;
-	vec3 temp;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		glm_vec3_muladds(camera->cameraFront, cameraSpeed, camera->cameraPos);
@@ -528,4 +475,54 @@ void processInput(GLFWwindow *window, Camera *camera)
 		glm_vec3_normalize(temp);
 		glm_vec3_muladds(temp, cameraSpeed, camera->cameraPos);
 	}
+}
+
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+	AppContex *ctx = glfwGetWindowUserPointer(window);
+	float xoffset = xpos - ctx->camera->mouseLastX;
+	float yoffset = ctx->camera->mouseLastY - ypos;
+	const float sensitivity = 0.1f;
+	vec3 direction;
+	if (ctx->camera->firstMouse)
+	{
+		ctx->camera->mouseLastX = xpos;
+		ctx->camera->mouseLastY = ypos;
+		ctx->camera->firstMouse = false;
+		return;
+	}
+
+	ctx->camera->mouseLastX = xpos;
+	ctx->camera->mouseLastY = ypos;
+
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	ctx->camera->yaw += xoffset;
+	ctx->camera->pitch += yoffset;
+
+	if (ctx->camera->pitch > 89.0f)
+	{
+		ctx->camera->pitch = 89.0f;
+	}
+	if (ctx->camera->pitch < -89.0f)
+	{
+		ctx->camera->pitch = -89.0f;
+	}
+
+	direction[0] = cos(glm_rad(ctx->camera->yaw)) * cos(glm_rad(ctx->camera->pitch));
+	direction[1] = sin(glm_rad(ctx->camera->pitch));
+	direction[2] = sin(glm_rad(ctx->camera->yaw)) * cos(glm_rad(ctx->camera->pitch));
+	glm_normalize_to(direction, ctx->camera->cameraFront);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	AppContex *ctx = glfwGetWindowUserPointer(window);
+	ctx->camera->fov -= (float)yoffset;
+	if (ctx->camera->fov < 1.0f)
+		ctx->camera->fov = 1.0f;
+	if (ctx->camera->fov > 120.0f)
+		ctx->camera->fov = 120.0f; 
+
 }
