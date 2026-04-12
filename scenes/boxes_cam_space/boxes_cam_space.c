@@ -1,12 +1,12 @@
 #define _XOPEN_SOURCE 700
 #define _DEFAULT_SOURCE
 
-#include "lights_01.h"
+#include "boxes_cam_space.h"
 
 #include <cglm/cglm.h>
 
-
 #include <stb/stb_image.h>
+
 
 
 #include <math.h>
@@ -15,7 +15,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../source/ShaderManager.h"
+#include "../../source/ShaderManager.h"
 
 typedef struct Camera
 {
@@ -56,7 +56,7 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 
 /*int main(int argc, char* argv[])*/
-int light_scene(void)
+int boxes_scene(void)
 {
 	GLFWwindow* window;
 	float cube_vertices[] =

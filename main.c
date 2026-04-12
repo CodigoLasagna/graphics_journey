@@ -1,7 +1,5 @@
-/*
-#include "scenes/boxes_cam_space.h"
-*/
-#include "scenes/lights_01.h"
+#include "scenes/boxes_cam_space/boxes_cam_space.h"
+#include "scenes/lights_01/lights_01.h"
 
 int main(void)
 {

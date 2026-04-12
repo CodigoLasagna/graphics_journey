@@ -5,7 +5,7 @@ SCENES := ./scenes/
 SRCE := ./source/
 TARGET := main
 
-SRCS := $(wildcard  *.c $(SRCE)*.c $(SCENES)*.c)
+SRCS := $(wildcard  *.c $(SRCE)*.c $(SCENES)**/*.c)
 OBJS := $(patsubst %.c,%.o,$(SRCS))
 
 all: $(TARGET)

@@ -1,12 +1,12 @@
 #define _XOPEN_SOURCE 700
 #define _DEFAULT_SOURCE
 
-#include "boxes_cam_space.h"
+#include "lights_01.h"
 
 #include <cglm/cglm.h>
 
-#include <stb/stb_image.h>
 
+#include <stb/stb_image.h>
 
 
 #include <math.h>
@@ -15,7 +15,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../source/ShaderManager.h"
+#include "../../source/ShaderManager.h"
 
 typedef struct Camera
 {
@@ -56,7 +56,7 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 
 /*int main(int argc, char* argv[])*/
-int boxes_scene(void)
+int light_scene(void)
 {
 	GLFWwindow* window;
 	float cube_vertices[] =
@@ -298,14 +298,6 @@ int boxes_scene(void)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	/*
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	*/
 
 	/*textures*/
 	glGenTextures(1, &texture1);
