@@ -1,6 +1,8 @@
 #define _XOPEN_SOURCE 700
 #define _DEFAULT_SOURCE
 
+#define SCENE_PATH "scenes/lights_01/"
+
 #include "lights_01.h"
 
 #include <cglm/cglm.h>
@@ -156,7 +158,7 @@ int light_scene(void)
 	int tex_width, tex_height, nrChannels;
 
 
-	unsigned char *data = stbi_load("textures/crate_px.png", &tex_width, &tex_height, &nrChannels, 0);
+	unsigned char *data = stbi_load(SCENE_PATH "textures/crate_px.png", &tex_width, &tex_height, &nrChannels, 0);
 	unsigned int texture1;
 	unsigned int texture2;
 
@@ -271,7 +273,7 @@ int light_scene(void)
 		return -1;
 	}
 
-	ShaderConstructor(&shader_program, "shaders/shader.vert", "shaders/shader.frag");
+	ShaderConstructor(&shader_program, SCENE_PATH "shaders/shader.vert", SCENE_PATH "shaders/shader.frag");
 
 
 
@@ -324,7 +326,7 @@ int light_scene(void)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	data = stbi_load("textures/awesomeface.png", &tex_width, &tex_height, &nrChannels, 0);
+	data = stbi_load(SCENE_PATH "textures/awesomeface.png", &tex_width, &tex_height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
