@@ -199,15 +199,15 @@ int main()
 	Camera basic_cam;
 	EnvAttribs env_attribs;
 	AppContex ctx;
-	ctx.camera = &basic_cam;
-	ctx.env = &env_attribs;
 
 	int modelLoc;
 	int viewLoc;
 	int projLoc;
 
-	env_attribs.window_height = 1420;
-	env_attribs.window_width = 1080;
+	env_attribs.window_height = 1080;
+	env_attribs.window_width = 1420;
+	ctx.camera = &basic_cam;
+	ctx.env = &env_attribs;
 
 
 	glm_vec3_copy((vec3){0.0f, 0.0f, 3.0f}, basic_cam.cameraPos);
@@ -441,7 +441,12 @@ int main()
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
+	AppContex *ctx = glfwGetWindowUserPointer(window);
 	(void) window;
+	ctx->env->window_height = height;
+	ctx->env->window_width = width;
+	printf("window width: %d\n", width);
+	printf("window height: %d\n", height);
 	glViewport(0, 0, width, height);
 }
 
@@ -474,6 +479,14 @@ void processInput(GLFWwindow *window, Camera *camera)
 		glm_cross(camera->cameraFront, camera->cameraUp, temp);
 		glm_vec3_normalize(temp);
 		glm_vec3_muladds(temp, cameraSpeed, camera->cameraPos);
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		glm_vec3_muladds(camera->cameraUp, cameraSpeed, camera->cameraPos);
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		glm_vec3_mulsubs(camera->cameraUp, cameraSpeed, camera->cameraPos);
 	}
 }
 
@@ -519,10 +532,12 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	AppContex *ctx = glfwGetWindowUserPointer(window);
+	(void)xoffset;
 	ctx->camera->fov -= (float)yoffset;
 	if (ctx->camera->fov < 1.0f)
 		ctx->camera->fov = 1.0f;
 	if (ctx->camera->fov > 120.0f)
 		ctx->camera->fov = 120.0f; 
+	printf("camera fov: %f\n", ctx->camera->fov);
 
 }
