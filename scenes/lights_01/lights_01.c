@@ -11,33 +11,13 @@
 #include <stb/stb_image.h>
 
 
-#include <math.h>
-
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "../../source/ShaderManager.h"
+#include "../../source/CameraManager.h"
 
-typedef struct Camera
-{
-	vec3 cameraPos;
-	vec3 cameraFront;
-	vec3 cameraUp;
-	vec3 cameraDir;
-	mat4 projection;
-	mat4 view;
-	float deltaTime;
-	float lastFrame;
-	float currentFrame;
-
-	float mouseLastX;
-	float mouseLastY;
-	float yaw;
-	float pitch;
-	float fov;
-	bool firstMouse;
-}Camera;
 
 typedef struct EnvAttribs
 {
@@ -143,12 +123,6 @@ int light_scene(void)
 	unsigned int lightCubeVAO;
 	unsigned int EBO;
 
-	float timeValue = 0;
-	float greenValue = 0;
-	float blueValue = 0;
-	float angle = 0;
-	int vertexColorLocation = 0;
-
 	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 
@@ -161,21 +135,12 @@ int light_scene(void)
 
 	vec3 lightPos = {1.2f, 1.0f, 2.0f};
 
-
-	mat4 trans;
-	vec3 rot = {0.0f, 0.0f, 1.0f};
-	vec3 scale = {0.5f, 0.5f, 0.5f};
-	vec3 center;
-
 	mat4 model;
 
 	Camera basic_cam;
 	EnvAttribs env_attribs;
 	AppContex ctx;
 
-	int modelLoc;
-	int viewLoc;
-	int projLoc;
 
 	env_attribs.window_height = 1080;
 	env_attribs.window_width = 1420;
@@ -183,22 +148,9 @@ int light_scene(void)
 	ctx.env = &env_attribs;
 
 
-	glm_vec3_copy((vec3){0.0f, 0.0f, 3.0f}, basic_cam.cameraPos);
-	glm_vec3_copy((vec3){0.0f, 0.0f, -1.0f}, basic_cam.cameraFront);
-	glm_vec3_copy((vec3){0.0f, 1.0f, 0.0f}, basic_cam.cameraUp);
-	basic_cam.deltaTime = 0.0f;
-	basic_cam.lastFrame = 0.0f;
-	basic_cam.mouseLastX = (int) (env_attribs.window_width / 2);
-	basic_cam.mouseLastY = (int) (env_attribs.window_height / 2);
-	basic_cam.yaw = -90;
-	basic_cam.pitch = 0;
-	basic_cam.firstMouse = true;
-	basic_cam.fov = 90;
+	SetupBasicCamera(&basic_cam, env_attribs.window_width, env_attribs.window_height, 0.1f);
 
 
-	glm_mat4_identity(trans);
-	glm_rotate(trans, glm_rad(90.f), rot);
-	glm_scale(trans, scale);
 
 	glm_mat4_identity(model);
 	glm_mat4_identity(basic_cam.view);
@@ -334,24 +286,12 @@ int light_scene(void)
 
 	/*bind texture before draw glDrawElements*/
 
-	modelLoc = glGetUniformLocation(lightingShader.ID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
-	viewLoc = glGetUniformLocation(lightingShader.ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)basic_cam.view);
-	projLoc = glGetUniformLocation(lightingShader.ID, "projection");
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)basic_cam.projection);
 
 	glEnable(GL_DEPTH_TEST);
 
 
 	while(!glfwWindowShouldClose(window))
 	{
-		timeValue = glfwGetTime();
-		blueValue = (sin(timeValue) / 0.5f) - 0.5;
-		greenValue = (sin(timeValue) / 2.0f) + 0.7f;
-		vertexColorLocation = glGetUniformLocation(lightingShader.ID, "transColor");
-		glUseProgram(lightingShader.ID);
-		glUniform3f(vertexColorLocation, 0.0f, greenValue, blueValue);
 		processInput(window, &basic_cam);
 		/*
 		glClearColor(0.47f, 0.65f, 0.28f, 1.0f);
@@ -359,8 +299,6 @@ int light_scene(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm_perspective(glm_rad(basic_cam.fov), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)basic_cam.projection);
 		basic_cam.currentFrame = glfwGetTime();
 		basic_cam.deltaTime = basic_cam.currentFrame - basic_cam.lastFrame;
 		basic_cam.lastFrame = basic_cam.currentFrame;
@@ -396,8 +334,7 @@ int light_scene(void)
 
 
 
-		glm_vec3_add(basic_cam.cameraPos, basic_cam.cameraFront, center);
-		glm_lookat(basic_cam.cameraPos, center, basic_cam.cameraUp, basic_cam.view);
+		UpdateViewMatrix(&basic_cam);
 
 
 		glfwSwapBuffers(window);
@@ -433,31 +370,31 @@ static void processInput(GLFWwindow *window, Camera *camera)
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		glm_vec3_muladds(camera->cameraFront, cameraSpeed, camera->cameraPos);
+		glm_vec3_muladds(camera->Front, cameraSpeed, camera->Position);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		glm_vec3_mulsubs(camera->cameraFront, cameraSpeed, camera->cameraPos);
+		glm_vec3_mulsubs(camera->Front, cameraSpeed, camera->Position);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		glm_cross(camera->cameraFront, camera->cameraUp, temp);
+		glm_cross(camera->Front, camera->Up, temp);
 		glm_vec3_normalize(temp);
-		glm_vec3_mulsubs(temp, cameraSpeed, camera->cameraPos);
+		glm_vec3_mulsubs(temp, cameraSpeed, camera->Position);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		glm_cross(camera->cameraFront, camera->cameraUp, temp);
+		glm_cross(camera->Front, camera->Up, temp);
 		glm_vec3_normalize(temp);
-		glm_vec3_muladds(temp, cameraSpeed, camera->cameraPos);
+		glm_vec3_muladds(temp, cameraSpeed, camera->Position);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		glm_vec3_muladds(camera->cameraUp, cameraSpeed, camera->cameraPos);
+		glm_vec3_muladds(camera->Up, cameraSpeed, camera->Position);
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
-		glm_vec3_mulsubs(camera->cameraUp, cameraSpeed, camera->cameraPos);
+		glm_vec3_mulsubs(camera->Up, cameraSpeed, camera->Position);
 	}
 }
 
@@ -466,8 +403,6 @@ static void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 	AppContex *ctx = glfwGetWindowUserPointer(window);
 	float xoffset = xpos - ctx->camera->mouseLastX;
 	float yoffset = ctx->camera->mouseLastY - ypos;
-	const float sensitivity = 0.1f;
-	vec3 direction;
 	if (ctx->camera->firstMouse)
 	{
 		ctx->camera->mouseLastX = xpos;
@@ -479,25 +414,8 @@ static void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 	ctx->camera->mouseLastX = xpos;
 	ctx->camera->mouseLastY = ypos;
 
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
+	ProcessMouseMovement(ctx->camera, xoffset, yoffset, true);
 
-	ctx->camera->yaw += xoffset;
-	ctx->camera->pitch += yoffset;
-
-	if (ctx->camera->pitch > 89.0f)
-	{
-		ctx->camera->pitch = 89.0f;
-	}
-	if (ctx->camera->pitch < -89.0f)
-	{
-		ctx->camera->pitch = -89.0f;
-	}
-
-	direction[0] = cos(glm_rad(ctx->camera->yaw)) * cos(glm_rad(ctx->camera->pitch));
-	direction[1] = sin(glm_rad(ctx->camera->pitch));
-	direction[2] = sin(glm_rad(ctx->camera->yaw)) * cos(glm_rad(ctx->camera->pitch));
-	glm_normalize_to(direction, ctx->camera->cameraFront);
 }
 
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
