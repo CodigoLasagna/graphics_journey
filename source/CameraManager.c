@@ -48,6 +48,15 @@ void ProcessMouseMovement(Camera *camera, float xoffset, float yoffset, bool con
 	UpdateCameraVectors(camera);
 }
 
+void ProcessMouseScroll(Camera *camera, float yoffset)
+{
+	camera->fov -= (float)yoffset;
+	if (camera->fov < 1.0f)
+		camera->fov = 1.0f;
+	if (camera->fov > 120.0f)
+		camera->fov = 120.0f; 
+}
+
 void ProcessKeyboard(Camera *camera, enum CameraMovement direction)
 {
 	float velocity = camera->MovementSpeed * camera->deltaTime;

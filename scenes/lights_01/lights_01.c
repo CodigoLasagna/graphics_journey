@@ -279,10 +279,6 @@ int light_scene(void)
 	/*glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */ /*wireframe*/
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	/*transform the drawing*/
-
-	/*bind texture before draw glDrawElements*/
-
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -290,9 +286,6 @@ int light_scene(void)
 	while(!glfwWindowShouldClose(window))
 	{
 		processInput(window, &basic_cam);
-		/*
-		glClearColor(0.47f, 0.65f, 0.28f, 1.0f);
-		*/
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -413,11 +406,7 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	AppContex *ctx = glfwGetWindowUserPointer(window);
 	(void)xoffset;
-	ctx->camera->fov -= (float)yoffset;
-	if (ctx->camera->fov < 1.0f)
-		ctx->camera->fov = 1.0f;
-	if (ctx->camera->fov > 120.0f)
-		ctx->camera->fov = 120.0f; 
+	ProcessMouseScroll(ctx->camera, yoffset);
 	printf("camera fov: %f\n", ctx->camera->fov);
 
 }

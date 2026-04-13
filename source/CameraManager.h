@@ -43,6 +43,7 @@ void SetupBasicCamera(Camera *camera, int window_width, int window_height, float
 void UpdateCameraVectors(Camera *camera);
 
 void ProcessMouseMovement(Camera *camera, float xoffset, float yoffset, bool constrainPitch);
+void ProcessMouseScroll(Camera *camera, float yoffset);
 void ProcessKeyboard(Camera *camera, enum CameraMovement direction);
 
 
