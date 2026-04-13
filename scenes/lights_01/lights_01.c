@@ -250,7 +250,8 @@ int light_scene(void)
 		useShader(&lightingShader);
 		ShaderSetVec3(&lightingShader, "objectColor", (vec3){0.50f, 0.862f, 0.15f});
 		ShaderSetVec3(&lightingShader, "lightColor", (vec3){1.0f, 1.0f, 0.31f});
-		ShaderSetVec3(&lightingShader, "LightPos", lightPos);
+		ShaderSetVec3(&lightingShader, "lightPos", lightPos);
+		ShaderSetVec3(&lightingShader, "viewPos", basic_cam.Position);
 
 		glm_perspective(glm_rad(basic_cam.fov), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
 		ShaderSetMat4(&lightingShader, "projection", basic_cam.projection);
