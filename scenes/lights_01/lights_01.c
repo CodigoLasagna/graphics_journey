@@ -118,6 +118,7 @@ int light_scene(void)
 	unsigned int cubeVAO;
 	unsigned int lightCubeVAO;
 	unsigned int EBO;
+	float TimeValue = 0;
 
 
 
@@ -242,6 +243,7 @@ int light_scene(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		UpdateViewMatrix(&basic_cam);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		TimeValue = glfwGetTime();
 
 		basic_cam.currentFrame = glfwGetTime();
 		basic_cam.deltaTime = basic_cam.currentFrame - basic_cam.lastFrame;
@@ -252,6 +254,9 @@ int light_scene(void)
 		ShaderSetVec3(&lightingShader, "lightColor", (vec3){1.0f, 1.0f, 0.31f});
 		ShaderSetVec3(&lightingShader, "lightPos", lightPos);
 		ShaderSetVec3(&lightingShader, "viewPos", basic_cam.Position);
+		lightPos[0] = sin(TimeValue) * 3;
+		lightPos[1] = cos(TimeValue * 2) ;
+		lightPos[2] = cos(TimeValue) * 5;
 
 		glm_perspective(glm_rad(basic_cam.fov), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
 		ShaderSetMat4(&lightingShader, "projection", basic_cam.projection);
