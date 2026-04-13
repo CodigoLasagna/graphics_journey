@@ -26,6 +26,7 @@ typedef struct Camera
 	vec3 cameraUp;
 	vec3 cameraDir;
 	mat4 projection;
+	mat4 view;
 	float deltaTime;
 	float lastFrame;
 	float currentFrame;
@@ -132,18 +133,14 @@ int light_scene(void)
 
 	};
 
-	/*triangle*/
-	/*
-	unsigned int indices[] =
-	{
-		0, 1, 2,
-	};
-	*/
 
-	Shader shader_program;
+	Shader lightingShader;
+	Shader lightCubeShader;
 
 	unsigned int VBO;
 	unsigned int VAO;
+	unsigned int cubeVAO;
+	unsigned int lightCubeVAO;
 	unsigned int EBO;
 
 	float timeValue = 0;
@@ -162,40 +159,14 @@ int light_scene(void)
 	unsigned int texture1;
 	unsigned int texture2;
 
-	vec3 cubePositions[] =
-	{
-		{ 0.0f,  0.0f,  0.0f},
-		{ 2.0f,  5.0f, -15.0f},
-		{-1.5f, -2.2f, -2.5f},
-		{-3.8f, -2.0f, -12.0f},
-		{ 2.4f, -0.4f, -3.5f},
-		{-1.7f,  3.0f, -7.5f},
-		{ 1.3f, -2.0f, -2.5f},
-		{ 1.5f,  2.0f, -2.5f},
-		{ 1.5f,  0.2f, -1.5f},
-		{-1.3f,  1.0f, -1.5f},
-	};
+	vec3 lightPos = {1.2f, 1.0f, 2.0f};
 
-
-	/*simple test
-	vec4 vec = {1.0f, 0.0f, 0.0f, 1.0f};
-	mat4 trans;
-	vec4 result;
-
-
-	glm_mat4_identity(trans);
-	glm_translate(trans, (vec3){1.0f, 1.0f, 0.0f});
-	glm_mat4_mulv(trans, vec, result);
-
-	printf("%f %f %f\n", result[0], result[1], result[2]);
-	*/
 
 	mat4 trans;
 	vec3 rot = {0.0f, 0.0f, 1.0f};
 	vec3 scale = {0.5f, 0.5f, 0.5f};
 	vec3 center;
 
-	mat4 view;
 	mat4 model;
 
 	Camera basic_cam;
@@ -230,11 +201,11 @@ int light_scene(void)
 	glm_scale(trans, scale);
 
 	glm_mat4_identity(model);
-	glm_mat4_identity(view);
+	glm_mat4_identity(basic_cam.view);
 
 	glm_rotate(model, glm_rad(-55.0f), (vec3){1.0f, 0.0f, 0.0f});
 
-	glm_translate(view, (vec3){0.0f, 0.0f, -3.0f});
+	glm_translate(basic_cam.view, (vec3){0.0f, 0.0f, -3.0f});
 
 
 	glm_perspective(glm_rad(45.0f), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
@@ -273,7 +244,8 @@ int light_scene(void)
 		return -1;
 	}
 
-	ShaderConstructor(&shader_program, SCENE_PATH "shaders/shader.vert", SCENE_PATH "shaders/shader.frag");
+	ShaderConstructor(&lightingShader, SCENE_PATH "shaders/shader.vert", SCENE_PATH "shaders/color_shader.frag");
+	ShaderConstructor(&lightCubeShader, SCENE_PATH "shaders/shader.vert", SCENE_PATH "shaders/light_shader.frag");
 
 
 
@@ -299,6 +271,20 @@ int light_scene(void)
 	/*texture attrib array*/
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
+
+	glGenVertexArrays(1, &cubeVAO);
+	glBindVertexArray(cubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 *sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+	glGenVertexArrays(1, &lightCubeVAO);
+	glBindVertexArray(lightCubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 *sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 
 	/*textures*/
@@ -343,19 +329,16 @@ int light_scene(void)
 
 	/*glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */ /*wireframe*/
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	useShader(&shader_program);
-	glUniform1i(glGetUniformLocation(shader_program.ID, "texture1"), 0);
-	ShaderSetInt(&shader_program ,"texture2", 1);
 
 	/*transform the drawing*/
 
 	/*bind texture before draw glDrawElements*/
 
-	modelLoc = glGetUniformLocation(shader_program.ID, "model");
+	modelLoc = glGetUniformLocation(lightingShader.ID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
-	viewLoc = glGetUniformLocation(shader_program.ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)view);
-	projLoc = glGetUniformLocation(shader_program.ID, "projection");
+	viewLoc = glGetUniformLocation(lightingShader.ID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)basic_cam.view);
+	projLoc = glGetUniformLocation(lightingShader.ID, "projection");
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)basic_cam.projection);
 
 	glEnable(GL_DEPTH_TEST);
@@ -366,61 +349,55 @@ int light_scene(void)
 		timeValue = glfwGetTime();
 		blueValue = (sin(timeValue) / 0.5f) - 0.5;
 		greenValue = (sin(timeValue) / 2.0f) + 0.7f;
-		vertexColorLocation = glGetUniformLocation(shader_program.ID, "transColor");
-		glUseProgram(shader_program.ID);
+		vertexColorLocation = glGetUniformLocation(lightingShader.ID, "transColor");
+		glUseProgram(lightingShader.ID);
 		glUniform3f(vertexColorLocation, 0.0f, greenValue, blueValue);
 		processInput(window, &basic_cam);
+		/*
 		glClearColor(0.47f, 0.65f, 0.28f, 1.0f);
+		*/
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		/*glDrawArrays(GL_TRIANGLES, 0, 3);*/
-		/*glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); rectangle*/ 
-
-		/*rotation*/
-		/*
-		glm_translate(trans, (vec3){0.5f, -0.5f, 0.0f});
-		glm_mat4_identity(trans);
-		glm_rotate(trans, (float)glfwGetTime(), (vec3){0.0f, 0.0f, 1.0f});
-
-		transformLoc = glGetUniformLocation(shader_program.ID, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (float*)trans);
-		*/
-		/*cube rotation*/
 		glm_perspective(glm_rad(basic_cam.fov), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)basic_cam.projection);
 		basic_cam.currentFrame = glfwGetTime();
 		basic_cam.deltaTime = basic_cam.currentFrame - basic_cam.lastFrame;
 		basic_cam.lastFrame = basic_cam.currentFrame;
 
+		useShader(&lightingShader);
+		ShaderSetVec3(&lightingShader, "objectColor", (vec3){1.0f, 0.5f, 0.31f});
+		ShaderSetVec3(&lightingShader, "lightColor", (vec3){1.0f, 1.0f, 0.31f});
+
+		glm_perspective(glm_rad(basic_cam.fov), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
+		ShaderSetMat4(&lightingShader, "projection", basic_cam.projection);
+		ShaderSetMat4(&lightingShader, "view", basic_cam.view);
 
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+		glm_mat4_identity(model);
+		ShaderSetMat4(&lightingShader, "model", model);
 
-		glBindVertexArray(VAO);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			glm_mat4_identity(model);
-			glm_translate(model, cubePositions[i]);
-			angle = 20.0f * (i + 0.2);
-			glm_rotate(model, (float)glfwGetTime() * glm_rad(angle), (vec3){1.0f, 0.3f, 0.5f});
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
+		glBindVertexArray(cubeVAO);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-		}
+		/*draw lamp*/
+		useShader(&lightCubeShader);
+		ShaderSetMat4(&lightCubeShader, "projection", basic_cam.projection);
+		ShaderSetMat4(&lightCubeShader, "view", basic_cam.view);
+		glm_mat4_identity(model);
+		glm_translate(model, lightPos);
+		glm_scale(model, (vec3){0.2f, 0.2f, 0.2f});
+		ShaderSetMat4(&lightCubeShader, "model", model);
 
-		/*rotation camera*/
-		/*
-		camX = sin(glfwGetTime()) * radius;
-		camZ = cos(glfwGetTime()) * radius;
+		glBindVertexArray(lightCubeVAO);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-		glm_lookat((vec3){camX, 0.0f, camZ}, (vec3){0.0f, 0.0f, 0.0f}, (vec3){0.0f, 1.0f, 0.0f}, view);
-		*/
+
+
+
+
 		glm_vec3_add(basic_cam.cameraPos, basic_cam.cameraFront, center);
-		glm_lookat(basic_cam.cameraPos, center, basic_cam.cameraUp, view);
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)view);
+		glm_lookat(basic_cam.cameraPos, center, basic_cam.cameraUp, basic_cam.view);
 
 
 		glfwSwapBuffers(window);

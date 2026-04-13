@@ -1,5 +1,6 @@
 #include "ShaderManager.h"
 
+
 void ShaderConstructor(Shader* shader_program, const char* vertexPath, const char* fragmentPath)
 {
 	char* vertexCode;
@@ -114,4 +115,34 @@ void ShaderSetInt(Shader *shader_program, const char *name, int value)
 void ShaderSetFloat(Shader *shader_program, const char *name, float value)
 {
 	glUniform1f(glGetUniformLocation(shader_program->ID, name), value);
+}
+
+void ShaderSetVec2(Shader *shader_program, const char *name, vec2 value)
+{
+	glUniform2fv(glGetUniformLocation(shader_program->ID, name), 1, &value[0]);
+}
+
+void ShaderSetVec3(Shader *shader_program, const char *name, vec3 value)
+{
+	glUniform3fv(glGetUniformLocation(shader_program->ID, name), 1, &value[0]);
+}
+
+void ShaderSetVec4(Shader *shader_program, const char *name, vec4 value)
+{
+	glUniform4fv(glGetUniformLocation(shader_program->ID, name), 1, &value[0]);
+}
+
+void ShaderSetMat2(Shader *shader_program, const char *name, mat2 mat)
+{
+	glUniformMatrix2fv(glGetUniformLocation(shader_program->ID, name), 1, GL_FALSE, &mat[0][0]);
+}
+
+void ShaderSetMat3(Shader *shader_program, const char *name, mat3 mat)
+{
+	glUniformMatrix3fv(glGetUniformLocation(shader_program->ID, name), 1, GL_FALSE, &mat[0][0]);
+}
+
+void ShaderSetMat4(Shader *shader_program, const char *name, mat4 mat)
+{
+	glUniformMatrix4fv(glGetUniformLocation(shader_program->ID, name), 1, GL_FALSE, &mat[0][0]);
 }
