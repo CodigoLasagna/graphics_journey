@@ -41,42 +41,42 @@ int light_scene(void)
 	GLFWwindow* window;
 	float cube_vertices[] =
 	{
-		/* positions         	colors           	texture coords*/
+		/* positions         	normals           	texture coords*/
 		/*front */
-		-0.5f, -0.5f,  0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, 	 0.0f,  0.0f,  1.0f,	
+		 0.5f, -0.5f,  0.5f, 	 0.0f,  0.0f,  1.0f,	
+		 0.5f,  0.5f,  0.5f, 	 0.0f,  0.0f,  1.0f,	
+		-0.5f,  0.5f,  0.5f, 	 0.0f,  0.0f,  1.0f,	
 
 		/*back */
-		 0.5f, -0.5f, -0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f, 	 0.0f,  0.0f, -1.0f,	
+		-0.5f, -0.5f, -0.5f, 	 0.0f,  0.0f, -1.0f,	
+		-0.5f,  0.5f, -0.5f, 	 0.0f,  0.0f, -1.0f,	
+		 0.5f,  0.5f, -0.5f, 	 0.0f,  0.0f, -1.0f,	
 
 		/*left*/
-		-0.5f, -0.5f, -0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 	-1.0f,  0.0f,  0.0f,	
+		-0.5f, -0.5f,  0.5f, 	-1.0f,  0.0f,  0.0f,	
+		-0.5f,  0.5f,  0.5f, 	-1.0f,  0.0f,  0.0f,	
+		-0.5f,  0.5f, -0.5f, 	-1.0f,  0.0f,  0.0f,	
 
 		/*right*/
-		 0.5f, -0.5f,  0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f, 	 1.0f,  0.0f,  0.0f,	
+		 0.5f, -0.5f, -0.5f, 	 1.0f,  0.0f,  0.0f,	
+		 0.5f,  0.5f, -0.5f, 	 1.0f,  0.0f,  0.0f,	
+		 0.5f,  0.5f,  0.5f, 	 1.0f,  0.0f,  0.0f,	
 
 		 /*top*/
-		-0.5f,  0.5f,  0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f, 	 0.0f,  1.0f,  0.0f,	
+		 0.5f,  0.5f,  0.5f, 	 0.0f,  1.0f,  0.0f,	
+		 0.5f,  0.5f, -0.5f, 	 0.0f,  1.0f,  0.0f,	
+		-0.5f,  0.5f, -0.5f, 	 0.0f,  1.0f,  0.0f,	
 
 		/*bottom*/
-		-0.5f, -0.5f, -0.5f, 	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f, 	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, 	0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 	 0.0f, -1.0f,  0.0f,	
+		 0.5f, -0.5f, -0.5f, 	 0.0f, -1.0f,  0.0f,	
+		 0.5f, -0.5f,  0.5f, 	 0.0f, -1.0f,  0.0f,	
+		-0.5f, -0.5f,  0.5f, 	 0.0f, -1.0f,  0.0f,	
 
 
 	};
@@ -115,20 +115,18 @@ int light_scene(void)
 	Shader lightCubeShader;
 
 	unsigned int VBO;
-	unsigned int VAO;
 	unsigned int cubeVAO;
 	unsigned int lightCubeVAO;
 	unsigned int EBO;
 
-	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 
+
+
+	/*
 	int tex_width, tex_height, nrChannels;
-
-
 	unsigned char *data = stbi_load(SCENE_PATH "textures/crate_px.png", &tex_width, &tex_height, &nrChannels, 0);
-	unsigned int texture1;
-	unsigned int texture2;
+	*/
 
 	vec3 lightPos = {1.2f, 1.0f, 2.0f};
 
@@ -193,13 +191,11 @@ int light_scene(void)
 		return -1;
 	}
 
-	ShaderConstructor(&lightingShader, SCENE_PATH "shaders/shader.vert", SCENE_PATH "shaders/color_shader.frag");
+	ShaderConstructor(&lightingShader, SCENE_PATH "shaders/normal_light.vert", SCENE_PATH "shaders/color_shader.frag");
 	ShaderConstructor(&lightCubeShader, SCENE_PATH "shaders/shader.vert", SCENE_PATH "shaders/light_shader.frag");
 
 
 
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -209,69 +205,26 @@ int light_scene(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	/*coord attrib array*/
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
 
-	/*color attrib array*/
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	/*texture attrib array*/
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 
 	glGenVertexArrays(1, &cubeVAO);
 	glBindVertexArray(cubeVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 *sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 *sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glGenVertexArrays(1, &lightCubeVAO);
 	glBindVertexArray(lightCubeVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 *sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 *sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
-
-	/*textures*/
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		printf("Failed to load texture\n");
-	}
-	stbi_image_free(data);
-
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	data = stbi_load(SCENE_PATH "textures/awesomeface.png", &tex_width, &tex_height, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		printf("Failed to load texture\n");
-	}
-	stbi_image_free(data);
 
 
 
@@ -287,6 +240,7 @@ int light_scene(void)
 	{
 		processInput(window, &basic_cam);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		UpdateViewMatrix(&basic_cam);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		basic_cam.currentFrame = glfwGetTime();
@@ -294,8 +248,9 @@ int light_scene(void)
 		basic_cam.lastFrame = basic_cam.currentFrame;
 
 		useShader(&lightingShader);
-		ShaderSetVec3(&lightingShader, "objectColor", (vec3){1.0f, 0.5f, 0.31f});
+		ShaderSetVec3(&lightingShader, "objectColor", (vec3){0.50f, 0.862f, 0.15f});
 		ShaderSetVec3(&lightingShader, "lightColor", (vec3){1.0f, 1.0f, 0.31f});
+		ShaderSetVec3(&lightingShader, "LightPos", lightPos);
 
 		glm_perspective(glm_rad(basic_cam.fov), (float)env_attribs.window_width/env_attribs.window_height, 0.1f, 100.0f, basic_cam.projection);
 		ShaderSetMat4(&lightingShader, "projection", basic_cam.projection);
@@ -324,7 +279,6 @@ int light_scene(void)
 
 
 
-		UpdateViewMatrix(&basic_cam);
 
 
 		glfwSwapBuffers(window);
@@ -376,7 +330,7 @@ static void processInput(GLFWwindow *window, Camera *camera)
 	{
 		ProcessKeyboard(camera, CAM_UP);
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
 	{
 		ProcessKeyboard(camera, CAM_DOWN);
 	}
