@@ -7,10 +7,7 @@
 
 #include <cglm/cglm.h>
 
-
 #include <stb/stb_image.h>
-
-
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -148,7 +145,7 @@ int light_scene(void)
 	ctx.env = &env_attribs;
 
 
-	SetupBasicCamera(&basic_cam, env_attribs.window_width, env_attribs.window_height, 0.1f);
+	SetupBasicCamera(&basic_cam, env_attribs.window_width, env_attribs.window_height, 0.1f, 2.5f);
 
 
 
@@ -360,8 +357,6 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 static void processInput(GLFWwindow *window, Camera *camera)
 {
-	const float cameraSpeed = 2.5f * camera->deltaTime;
-	vec3 temp;
 
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
@@ -370,31 +365,27 @@ static void processInput(GLFWwindow *window, Camera *camera)
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		glm_vec3_muladds(camera->Front, cameraSpeed, camera->Position);
+		ProcessKeyboard(camera, CAM_FORWARD);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		glm_vec3_mulsubs(camera->Front, cameraSpeed, camera->Position);
+		ProcessKeyboard(camera, CAM_BACKWARD);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		glm_cross(camera->Front, camera->Up, temp);
-		glm_vec3_normalize(temp);
-		glm_vec3_mulsubs(temp, cameraSpeed, camera->Position);
+		ProcessKeyboard(camera, CAM_LEFT);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		glm_cross(camera->Front, camera->Up, temp);
-		glm_vec3_normalize(temp);
-		glm_vec3_muladds(temp, cameraSpeed, camera->Position);
+		ProcessKeyboard(camera, CAM_RIGHT);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		glm_vec3_muladds(camera->Up, cameraSpeed, camera->Position);
+		ProcessKeyboard(camera, CAM_UP);
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
-		glm_vec3_mulsubs(camera->Up, cameraSpeed, camera->Position);
+		ProcessKeyboard(camera, CAM_DOWN);
 	}
 }
 

@@ -5,10 +5,12 @@
 
 enum CameraMovement
 {
-	FORWARD,
-	BACKWARD,
-	LEFT,
-	RIGHT
+	CAM_FORWARD,
+	CAM_BACKWARD,
+	CAM_LEFT,
+	CAM_RIGHT,
+	CAM_UP,
+	CAM_DOWN
 };
 
 typedef struct Camera
@@ -37,10 +39,11 @@ typedef struct Camera
 }Camera;
 
 void SetupCamera(Camera *camera, vec3 position, vec3 up, vec3 front,float yaw, float pitch);
-void SetupBasicCamera(Camera *camera, int window_width, int window_height, float mouseSensitivity);
+void SetupBasicCamera(Camera *camera, int window_width, int window_height, float mouseSensitivity, float movementSpeed);
 void UpdateCameraVectors(Camera *camera);
 
 void ProcessMouseMovement(Camera *camera, float xoffset, float yoffset, bool constrainPitch);
+void ProcessKeyboard(Camera *camera, enum CameraMovement direction);
 
 
 void GetViewMatrix(Camera *camera, mat4 view);

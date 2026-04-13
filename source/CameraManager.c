@@ -2,7 +2,7 @@
 #include "CameraManager.h"
 
 
-void SetupBasicCamera(Camera *camera, int window_width, int window_height, float mouseSensitivity)
+void SetupBasicCamera(Camera *camera, int window_width, int window_height, float mouseSensitivity, float movementSpeed)
 {
 	glm_vec3_copy((vec3){0.0f, 0.0f, 3.0f}, camera->Position);
 	glm_vec3_copy((vec3){0.0f, 1.0f, 0.0f}, camera->Up);
@@ -10,6 +10,7 @@ void SetupBasicCamera(Camera *camera, int window_width, int window_height, float
 	glm_vec3_copy((vec3){0.0f, 0.0f, -1.0f}, camera->Front);
 
 	camera->MouseSensitivity = mouseSensitivity;
+	camera->MovementSpeed = movementSpeed;
 
 	camera->deltaTime = 0.0f;
 	camera->lastFrame = 0.0f;
@@ -45,6 +46,37 @@ void ProcessMouseMovement(Camera *camera, float xoffset, float yoffset, bool con
 	}
 
 	UpdateCameraVectors(camera);
+}
+
+void ProcessKeyboard(Camera *camera, enum CameraMovement direction)
+{
+	float velocity = camera->MovementSpeed * camera->deltaTime;
+	vec3 temp;
+
+	switch (direction) {
+		case CAM_FORWARD:
+			glm_vec3_muladds(camera->Front, velocity, camera->Position);
+			break;
+		case CAM_BACKWARD:
+			glm_vec3_mulsubs(camera->Front, velocity, camera->Position);
+			break;
+		case CAM_LEFT:
+			glm_cross(camera->Front, camera->Up, temp);
+			glm_vec3_normalize(temp);
+			glm_vec3_mulsubs(temp, velocity, camera->Position);
+			break;
+		case CAM_RIGHT:
+			glm_cross(camera->Front, camera->Up, temp);
+			glm_vec3_normalize(temp);
+			glm_vec3_muladds(temp, velocity, camera->Position);
+			break;
+		case CAM_UP:
+			glm_vec3_muladds(camera->Up, velocity, camera->Position);
+			break;
+		case CAM_DOWN:
+			glm_vec3_mulsubs(camera->Up, velocity, camera->Position);
+			break;
+	}
 }
 
 void UpdateCameraVectors(Camera *camera)
