@@ -7,13 +7,13 @@
 
 #include <cglm/cglm.h>
 
-#include <stb/stb_image.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "../../source/ShaderManager.h"
 #include "../../source/CameraManager.h"
+#include "../../source/TexturesManager.h"
 
 
 typedef struct EnvAttribs
@@ -77,8 +77,6 @@ int diffuse_maps_scene(void)
 		 0.5f, -0.5f, -0.5f, 	 0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
 		 0.5f, -0.5f,  0.5f, 	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,
 		-0.5f, -0.5f,  0.5f, 	 0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
-
-
 	};
 
 	/* rectangle*/
@@ -118,14 +116,14 @@ int diffuse_maps_scene(void)
 	unsigned int cubeVAO;
 	unsigned int lightCubeVAO;
 	unsigned int EBO;
+	/*
 	float TimeValue = 0;
+	*/
 
 
 
 
 
-	int tex_width, tex_height, nrChannels;
-	unsigned char *data = stbi_load(SCENE_PATH "textures/crate_px.png", &tex_width, &tex_height, &nrChannels, 0);
 	unsigned int texture;
 
 	vec3 lightPos = {1.2f, 1.0f, 2.0f};
@@ -174,7 +172,6 @@ int diffuse_maps_scene(void)
 		glfwTerminate();
 		return 1;
 	}
-	stbi_set_flip_vertically_on_load(true);
 
 
 	/*contexto de opengl usando glfw*/
@@ -220,22 +217,7 @@ int diffuse_maps_scene(void)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		printf("Failed to load texture\n");
-	}
-	stbi_image_free(data);
+
 
 
 
@@ -260,6 +242,8 @@ int diffuse_maps_scene(void)
 
 	glEnable(GL_DEPTH_TEST);
 
+	texture = load_texture(SCENE_PATH "textures/crate_px.png");
+
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -267,7 +251,9 @@ int diffuse_maps_scene(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		UpdateViewMatrix(&basic_cam);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		/*
 		TimeValue = glfwGetTime();
+		*/
 
 		basic_cam.currentFrame = glfwGetTime();
 		basic_cam.deltaTime = basic_cam.currentFrame - basic_cam.lastFrame;

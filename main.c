@@ -5,5 +5,5 @@
 
 int main(void)
 {
-	return light_scene_02();
+	return diffuse_maps_scene();
 }
