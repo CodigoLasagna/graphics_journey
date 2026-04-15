@@ -254,7 +254,6 @@ int light_scene_02(void)
 		lightColor[0] = sin(TimeValue * 2.0f);
 		lightColor[1] = sin(TimeValue * 0.7f);
 		lightColor[2] = sin(TimeValue * 1.3f);
-		ShaderSetVec3(&lightingShader, "lightColor", (vec3){1.0f, 1.0f, 1.0f});
 		ShaderSetVec3(&lightingShader, "lightPos", lightPos);
 		ShaderSetVec3(&lightingShader, "viewPos", basic_cam.Position);
 		ShaderSetVec3(&lightingShader, "material.ambient", (vec3){0.50f, 0.862f, 0.15f});
@@ -284,6 +283,7 @@ int light_scene_02(void)
 		useShader(&lightCubeShader);
 		ShaderSetMat4(&lightCubeShader, "projection", basic_cam.projection);
 		ShaderSetMat4(&lightCubeShader, "view", basic_cam.view);
+		ShaderSetVec3(&lightCubeShader, "lightColor", lightColor);
 		glm_mat4_identity(model);
 		glm_translate(model, lightPos);
 		glm_scale(model, (vec3){0.2f, 0.2f, 0.2f});
