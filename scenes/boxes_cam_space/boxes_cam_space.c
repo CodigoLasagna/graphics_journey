@@ -1,7 +1,7 @@
 #define _XOPEN_SOURCE 700
 #define _DEFAULT_SOURCE
 
-#define SCENE_PATH "scenes/lights_01/"
+#define SCENE_PATH "scenes/boxes_cam_space/"
 
 #include "boxes_cam_space.h"
 
